@@ -5,6 +5,7 @@ RSpec.describe Reservation, type: :model do
   # Should have many products reservations and products through products reservations
   it { should have_many(:products_reservations)}
   it { should have_many(:products).through(:products_reservations)}
+  it { should accept_nested_attributes_for(:products_reservations)}
 
   # Validation
   # Should have a status before saving

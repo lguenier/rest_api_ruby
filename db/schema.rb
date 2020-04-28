@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_27_135008) do
+ActiveRecord::Schema.define(version: 2020_04_28_121506) do
 
   create_table "inventories", force: :cascade do |t|
     t.integer "product_id", null: false
@@ -27,10 +27,9 @@ ActiveRecord::Schema.define(version: 2020_04_27_135008) do
   create_table "products_reservations", force: :cascade do |t|
     t.integer "product_id", null: false
     t.integer "reservation_id", null: false
-    t.integer "inventory_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["inventory_id"], name: "index_products_reservations_on_inventory_id"
+    t.integer "inventory_id"
     t.index ["product_id"], name: "index_products_reservations_on_product_id"
     t.index ["reservation_id"], name: "index_products_reservations_on_reservation_id"
   end
@@ -42,7 +41,6 @@ ActiveRecord::Schema.define(version: 2020_04_27_135008) do
   end
 
   add_foreign_key "inventories", "products"
-  add_foreign_key "products_reservations", "inventories"
   add_foreign_key "products_reservations", "products"
   add_foreign_key "products_reservations", "reservations"
 end
