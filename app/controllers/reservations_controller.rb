@@ -6,16 +6,18 @@ class ReservationsController < ApplicationController
   end
 
   def create
-    line = []
+    lines = Hash.new(0)
 
     params.fetch(:lines).each do |product|
-      @product = Product.find_by_product!(product.fetch('product'))
-      @quantity = Integer(product.fetch('quantity'))
-      raise RangeError if @quantity < 1
-      Integer((product['quantity'])).times { line.append({product_id: @product.id})}
+      product_id = Product.find_by_product!(product.fetch('product')).id
+      quantity = Integer(product.fetch('quantity'))
+      raise RangeError if quantity < 1
+      lines[product_id] += quantity
     end
 
-    @reservation = Reservation.create(status: "PENDING", products_reservations_attributes: line)
+    products_reservations_attributes = lines.map {|p_id, quantity| {product_id: p_id, quantity: quantity}}
+
+    @reservation = Reservation.create(status: "PENDING", products_reservations_attributes: products_reservations_attributes)
     json_response({id: @reservation.id, created_at: @reservation.created_at, lines: params[:lines], status: @reservation.status}, :created)
   end
 end
