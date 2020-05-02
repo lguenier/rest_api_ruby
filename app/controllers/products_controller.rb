@@ -1,12 +1,20 @@
 class ProductsController < ApplicationController
   def index
-    if params[:limit] and params[:limit].to_i < 1
-      Integer(params.fetch(:limit))
+    limit = params[:limit]
+    cursor = params[:cursor]
+    if limit
+      limit = Integer(params[:limit])
+      products = Product.where('id > ?', cursor.to_i).limit(limit)
     else
-      @products = Product.all.map {|p| {product: p.product, quantity: p.quantity, available: (p.quantity - p.reserved)}}
-      @cursor = ""
-      json_response({inventory: @products, cursor: ""})
+      products = Product.where('id > ?', cursor.to_i)
     end
+    p products
+
+    @cursor = products.pluck(:id)[-1].to_s
+    @products = products.map {|p| {id: p.id, product: p.product, quantity: p.quantity, available: (p.quantity - p.reserved)}}
+
+    json_response({inventory: @products, cursor: @cursor})
+
   end
 
   def create

@@ -5,6 +5,8 @@ class Reservation < ApplicationRecord
   accepts_nested_attributes_for :products_reservations
   validates :status, inclusion: %w(RESERVED BACKORDER PENDING)
 
+  default_scope { order(:id) }
+
   after_create :check_status
   after_touch :check_status
 

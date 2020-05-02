@@ -1,8 +1,17 @@
 class ReservationsController < ApplicationController
   def index
-    @reservations = Reservation.all.map {|r| {id: r.id, created_at: r.created_at, lines: r.products_list, status: r.status}}
-    @cursor = ""
-    render json: {reservations: @reservations, cursor: @cursor}
+    limit = params[:limit]
+    cursor = params[:cursor]
+    if limit
+      limit = Integer(params[:limit])
+      reservations = Reservation.where('id > ?', cursor.to_i).limit(limit)
+    else
+      reservations = Reservation.where('id > ?', cursor.to_i)
+    end
+
+    @reservations = reservations.map {|r| {id: r.id, created_at: r.created_at, lines: r.products_list, status: r.status}}
+
+    json_response({reservations: @reservations, cursor: @reservations.pluck(:id)[-1].to_s})
   end
 
   def create

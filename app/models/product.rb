@@ -8,6 +8,8 @@ class Product < ApplicationRecord
 
   after_save :check_backorder
 
+  default_scope { order(:id) }
+
   def reserved
     ProductsReservation.where(reserved: true).where(product_id: self.id).pluck(:quantity).sum
   end
