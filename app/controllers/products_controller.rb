@@ -8,7 +8,6 @@ class ProductsController < ApplicationController
     else
       products = Product.where('id > ?', cursor.to_i)
     end
-    p products
 
     @cursor = products.pluck(:id)[-1].to_s
     @products = products.map {|p| {id: p.id, product: p.product, quantity: p.quantity, available: (p.quantity - p.reserved)}}
